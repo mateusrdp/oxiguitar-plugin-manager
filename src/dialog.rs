@@ -375,24 +375,28 @@ impl Tab for Dialog {
                 let c = &s.copies[i];
                 let system = !c.entry.deletable
                     && c.entry.folder == oxiguitar_plugin::PluginFolderKind::System;
-                let mut widgets = vec![
-                    label(name_text(c), system || c.note.is_some()),
-                    label(about_text(c), true),
-                ];
+                // One line a copy: the core lays a dialog's widgets out
+                // one under the other.
+                let mut widgets = vec![label(
+                    format!("{} · {}", name_text(c), about_text(c)),
+                    system || c.note.is_some(),
+                )];
                 if n == 0
                     && let Some(id) = &id
                 {
                     widgets.push(label(s.latest_text(id), true));
                     if let Some(r) = &update {
+                        // Widget ids are lowercase words and numbers: the
+                        // copy's index names its plugin.
                         widgets.push(button(
-                            format!("update:{id}"),
+                            format!("update-{i}"),
                             format!("Update to {}", r.version),
                             s.updating.is_none(),
                         ));
                     }
                 }
                 widgets.push(button(
-                    format!("delete:{i}"),
+                    format!("delete-{i}"),
                     "Delete",
                     c.entry.deletable && c.note.as_deref() != Some("deleted"),
                 ));
@@ -401,13 +405,13 @@ impl Tab for Dialog {
         }
         for a in &s.added {
             rows.push(Row {
-                widgets: vec![
-                    label(&a.name, false),
-                    label(
-                        format!("{} · your folder · used after a restart", a.version),
-                        true,
+                widgets: vec![label(
+                    format!(
+                        "{} · {} · your folder · used after a restart",
+                        a.name, a.version
                     ),
-                ],
+                    false,
+                )],
             });
         }
         rows.push(Row {
@@ -436,9 +440,19 @@ impl Tab for Dialog {
         }
         if widget == "install" {
             self.install();
-        } else if let Some(id) = widget.strip_prefix("update:") {
-            self.start_update(id)?;
-        } else if let Some(i) = widget.strip_prefix("delete:")
+        } else if let Some(i) = widget.strip_prefix("update-")
+            && let Ok(i) = i.parse::<usize>()
+        {
+            let id = self
+                .shared
+                .state()
+                .copies
+                .get(i)
+                .and_then(|c| c.entry.id.clone());
+            if let Some(id) = id {
+                self.start_update(&id)?;
+            }
+        } else if let Some(i) = widget.strip_prefix("delete-")
             && let Ok(i) = i.parse::<usize>()
         {
             self.delete(i);
@@ -602,7 +616,10 @@ mod tests {
         }
     }
 
+    /// What the dialog shows, a line a row; OxiGuitar must be able to show
+    /// it (ids it accepts, none twice).
     fn texts(content: &TabContent) -> Vec<String> {
+        assert_eq!(content.problems(), Vec::<String>::new());
         content
             .rows
             .iter()
@@ -654,18 +671,18 @@ mod tests {
         let shown = texts(&dialog.content());
         assert_eq!(
             shown[1],
-            "a.b | 0.1.0 · system · not used: a.oxp is | not on GitHub: can't check | [delete:0 off]"
+            "a.b · 0.1.0 · system · not used: a.oxp is | not on GitHub: can't check | [delete-0 off]"
         );
-        assert_eq!(shown[2], "a.b | 0.2.0 · your folder · in use | [delete:1]");
+        assert_eq!(shown[2], "a.b · 0.2.0 · your folder · in use | [delete-1]");
         assert_eq!(shown[3], "[install]");
         // A system copy stays whatever is asked.
-        dialog.on("delete:0", TabEvent::Clicked).unwrap();
-        dialog.on("delete:1", TabEvent::Clicked).unwrap();
+        dialog.on("delete-0", TabEvent::Clicked).unwrap();
+        dialog.on("delete-1", TabEvent::Clicked).unwrap();
         assert!(!mine.exists());
         let shown = texts(&dialog.content());
         assert_eq!(
             shown[2],
-            "a.b | 0.2.0 · your folder · deleted | [delete:1 off]"
+            "a.b · 0.2.0 · your folder · deleted | [delete-1 off]"
         );
         assert!(shown[4].contains("is deleted"), "{shown:?}");
         dialog.closed(true).unwrap();
@@ -720,6 +737,19 @@ mod tests {
         assert_eq!(
             s.update_for("a.b").unwrap().version.to_string(),
             "0.3.0-beta.1"
+        );
+        // Shown with its button, an id OxiGuitar accepts.
+        let shared = Arc::new(Shared::new(Host::detached()));
+        *shared.state() = State {
+            generation: 1,
+            copies: s.copies.clone(),
+            latest: s.latest.clone(),
+            ..State::default()
+        };
+        let shown = texts(&Dialog { shared }.content());
+        assert_eq!(
+            shown[1],
+            "a.b ! · 0.2.0 · system · in use | newest: 0.3.0-beta.1 | [update-0] | [delete-0 off]"
         );
         s.latest.insert(
             repo.clone(),
