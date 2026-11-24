@@ -1,0 +1,188 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (C) 2026 Mateus Rocha de Paula and the OxiGuitar contributors
+
+// The Plugin Manager's views (#344; plugin interface 1.15): its window,
+// with Add… at the top, the plugin files in a scrolling list and Close at
+// the bottom, and the question before a file is deleted. OxiGuitar compiles
+// this file with Slint's interpreter and shows it with its own widgets,
+// style, font and colours (#346); the plugin sets the properties and hears
+// the callbacks (src/ui.rs).
+
+import { Button, ListView, Palette, StandardButton } from "std-widgets.slint";
+
+// A plugin file, as a line of the list.
+export struct Line {
+    // "! " before the name when the file can reach the network.
+    name: string,
+    version: string,
+    path: string,
+    // The X is on: the file isn't in a system folder.
+    removable: bool,
+    // The newest release, when it is newer than every copy; empty otherwise.
+    update: string,
+}
+
+// The small red X, with "Delete" as its tooltip.
+component RemoveButton {
+    in property <bool> enabled: true;
+    callback clicked();
+    width: 24px;
+    height: 24px;
+
+    area := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+
+    Rectangle {
+        border-radius: 4px;
+        background: area.has-hover ? #d32f2f20 : transparent;
+    }
+
+    Text {
+        text: "X";
+        font-size: 12px;
+        font-weight: 700;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        color: root.enabled ? #d32f2f : Palette.foreground.with-alpha(0.3);
+    }
+
+    // The tooltip, to the X's left so the row never clips it.
+    if area.has-hover: Rectangle {
+        x: -self.width - 4px;
+        y: (parent.height - self.height) / 2;
+        width: tip.preferred-width + 12px;
+        height: tip.preferred-height + 6px;
+        border-radius: 3px;
+        background: Palette.alternate-background;
+        border-width: 1px;
+        border-color: Palette.border;
+        tip := Text {
+            text: "Delete";
+            font-size: 11px;
+            color: Palette.alternate-foreground;
+        }
+    }
+}
+
+export component ManagerWindow inherits Window {
+    in property <[Line]> lines;
+    // What the last thing done came to, or what went wrong; empty: nothing.
+    in property <string> status;
+    // An update is being downloaded: no other until it is done.
+    in property <bool> busy;
+    callback add();
+    callback remove(int);
+    callback update(int);
+    callback close();
+
+    title: "Plugin Manager";
+    preferred-width: 640px;
+    preferred-height: 440px;
+    min-width: 360px;
+    min-height: 240px;
+
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+
+        HorizontalLayout {
+            Button {
+                text: "Add…";
+                enabled: !root.busy;
+                clicked => { root.add(); }
+            }
+            Rectangle { }
+        }
+
+        ListView {
+            vertical-stretch: 1;
+            for line[i] in root.lines: HorizontalLayout {
+                padding-top: 4px;
+                padding-bottom: 4px;
+                padding-right: 8px;
+                spacing: 8px;
+
+                VerticalLayout {
+                    alignment: center;
+                    horizontal-stretch: 1;
+                    Text {
+                        text: line.version == "" ? line.name : line.name + "  " + line.version;
+                        overflow: elide;
+                    }
+                    Text {
+                        text: line.path;
+                        font-size: 11px;
+                        color: Palette.foreground.with-alpha(0.6);
+                        overflow: elide;
+                    }
+                }
+
+                if line.update != "": Button {
+                    text: "Update to " + line.update;
+                    enabled: !root.busy;
+                    clicked => { root.update(i); }
+                }
+
+                VerticalLayout {
+                    alignment: center;
+                    RemoveButton {
+                        enabled: line.removable;
+                        clicked => { root.remove(i); }
+                    }
+                }
+            }
+        }
+
+        if root.status != "": Text {
+            text: root.status;
+            wrap: word-wrap;
+        }
+
+        HorizontalLayout {
+            Rectangle { }
+            Button {
+                text: "Close";
+                clicked => { root.close(); }
+            }
+        }
+    }
+}
+
+// "Delete this file?", before the X deletes it.
+export component ConfirmDialog inherits Dialog {
+    in property <string> name;
+    in property <string> path;
+    callback confirmed();
+    callback cancelled();
+
+    title: "Delete Plugin File";
+
+    VerticalLayout {
+        padding: 12px;
+        spacing: 6px;
+        Text {
+            text: "Delete " + root.name + "?";
+            font-weight: 600;
+        }
+        Text {
+            text: root.path;
+            font-size: 11px;
+            color: Palette.foreground.with-alpha(0.6);
+            wrap: word-wrap;
+        }
+    }
+
+    StandardButton {
+        kind: cancel;
+        clicked => { root.cancelled(); }
+    }
+    Button {
+        text: "Delete";
+        primary: true;
+        dialog-button-role: accept;
+        clicked => { root.confirmed(); }
+    }
+}
