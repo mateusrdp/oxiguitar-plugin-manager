@@ -1,0 +1,6 @@
+{
+  "repository": "mateusrdp/oxiguitar-plugin-manager",
+  "plugins": [
+    {"name": "plugin-manager", "package": "oxiguitar-plugin-manager", "library": "oxiguitar_plugin_manager"}
+  ]
+}

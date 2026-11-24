@@ -1,0 +1,72 @@
+[package]
+name = "oxiguitar-plugin-manager"
+description = "A plugin for OxiGuitar that manages the others: every copy with its version and the newest release, updates, installing a downloaded plugin file, deleting copies."
+version = "0.0.0"
+edition = "2024"
+# Rust from rustup, raised only when something needs it (CONTRIBUTING.md).
+rust-version = "1.99"
+license = "GPL-3.0-or-later"
+authors = ["Mateus Rocha de Paula", "The OxiGuitar contributors"]
+repository = "https://github.com/mateusrdp/oxiguitar-plugin-manager"
+homepage = "https://github.com/mateusrdp/oxiguitar-plugin-manager"
+publish = false
+
+[lib]
+# An ordinary library for tests, and plugin-manager.oxp when built with
+# `--features oxp --crate-type cdylib` (build-oxp.sh).
+crate-type = ["lib"]
+
+[features]
+oxp = []
+
+[dependencies]
+# The SDK, from OxiGuitar's repository at the commit of interface 1.15
+# (mateusrdp/oxiguitar#345: the plugin files), until a release tags it.
+# Nothing of OxiGuitar's is on crates.io.
+oxiguitar-plugin = { git = "https://github.com/mateusrdp/oxiguitar", rev = "89728aaa503cef4c49b87e081980b5e8ffc341aa" }
+# Asking GitHub for each plugin's releases and downloading one (MIT OR
+# Apache-2.0), as oxiguitar-ai does: pure Rust but for TLS's cryptography,
+# rustls with ring (the mature provider), and Mozilla's root certificates
+# built in (webpki-roots).
+ureq = { version = "3.5", default-features = false, features = ["rustls"] }
+# Versions as plugins and releases write them (MIT OR Apache-2.0).
+semver = "1.0.28"
+# Reading a release's zip (MIT).
+zip = { version = "9.8", default-features = false, features = ["deflate"] }
+# Checking a download against the release's SHA256SUMS (MIT OR Apache-2.0).
+sha2 = "0.11"
+# A plugin file's manifest and the functions it imports (MIT OR
+# Apache-2.0), as OxiGuitar's host reads them.
+object = { version = "0.41", default-features = false, features = ["read_core", "elf", "macho", "pe", "std"] }
+# The plugin's own file dialog (MIT): the system's, through the desktop
+# portal on Linux, as OxiGuitar's own dialogs are.
+rfd = { version = "0.18", default-features = false, features = ["xdg-portal"] }
+
+[dev-dependencies]
+# The contract suite (tests/contract.rs) runs the built .oxp file through
+# OxiGuitar's own plugin host.
+oxiguitar-plugin-test = { git = "https://github.com/mateusrdp/oxiguitar", rev = "89728aaa503cef4c49b87e081980b5e8ffc341aa" }
+oxiguitar-host = { git = "https://github.com/mateusrdp/oxiguitar", rev = "89728aaa503cef4c49b87e081980b5e8ffc341aa" }
+
+# Plugins deny `unsafe` rather than forbid it: `export_plugin!` allows it on
+# the two attributes it generates, and nowhere else.
+[lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+unreachable_pub = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+dbg_macro = "warn"
+todo = "warn"
+
+[profile.release]
+# Small files. Keep the default `panic = "unwind"`: a panic is then caught
+# and reported as an error instead of closing OxiGuitar.
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+# Its own workspace, wherever the folder is copied.
+[workspace]
