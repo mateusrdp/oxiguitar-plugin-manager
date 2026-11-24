@@ -1,0 +1,17 @@
+{
+  "interface": "1.15",
+  "id": "oxiguitar.plugin-manager",
+  "name": "Plugin Manager",
+  "version": "0.1.0",
+  "description": "Every copy of every plugin with its version and the newest release: update, install a plugin file you downloaded, delete copies. It goes to github.com each time it opens.",
+  "authors": ["Mateus Rocha de Paula", "The OxiGuitar contributors"],
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/mateusrdp/oxiguitar-plugin-manager",
+  "tools": [
+    { "id": "manage", "name": "Plugin Manager…", "description": "Every plugin file, with its version and the newest release: add, update or delete them.", "edits": false }
+  ],
+  "views": [
+    { "id": "manager", "component": "ManagerWindow", "place": "window" },
+    { "id": "confirm", "component": "ConfirmDialog", "place": "window" }
+  ]
+}
