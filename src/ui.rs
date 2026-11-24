@@ -276,15 +276,10 @@ mod tests {
         let compiled =
             oxiguitar_plugin_test::compile_ui(include_str!("../ui/manager.slint").into()).unwrap();
         let manager = compiled.component("ManagerWindow").unwrap();
-        let mut properties: Vec<String> = manager.properties().map(|(n, _)| n).collect();
-        properties.sort();
-        assert_eq!(properties, ["busy", "lines", "status"]);
-        let mut callbacks: Vec<String> = manager.callbacks().collect();
-        callbacks.sort();
-        assert_eq!(callbacks, ["add", "close", "remove", "update"]);
+        assert_eq!(manager.properties, ["busy", "lines", "status"]);
+        assert_eq!(manager.callbacks, ["add", "close", "remove", "update"]);
         let confirm = compiled.component("ConfirmDialog").unwrap();
-        let mut callbacks: Vec<String> = confirm.callbacks().collect();
-        callbacks.sort();
-        assert_eq!(callbacks, ["cancelled", "confirmed"]);
+        assert_eq!(confirm.properties, ["name", "path"]);
+        assert_eq!(confirm.callbacks, ["cancelled", "confirmed"]);
     }
 }
