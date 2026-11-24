@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Mateus Rocha de Paula and the OxiGuitar contributors
 
 //! What OxiGuitar found (`Host::plugin_files`, interface 1.15), as the
-//! dialog lists it: every plugin file, every copy of a plugin included,
+//! window lists it: every plugin file, every copy of a plugin included,
 //! with what the user may do with it.
 //!
 //! A copy in a system folder (where packages install) is shown but never
