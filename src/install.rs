@@ -10,7 +10,7 @@
 //! loaded stays as it is in memory until it quits: Linux and macOS keep
 //! the old file's contents for it, and on Windows, where a loaded file
 //! can't be replaced or deleted but can be renamed, the old copy is
-//! renamed to `NAME.oxp.old` and removed the next time the dialog opens.
+//! renamed to `NAME.oxp.old` and removed the next time the window opens.
 
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};

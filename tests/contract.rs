@@ -3,7 +3,7 @@
 
 //! The contract suite: builds this crate as an `.oxp` file and checks it
 //! through OxiGuitar's own plugin host, as the app would load it. Then the
-//! file itself: its manifest reads as the dialog reads other plugins', and
+//! file itself: its manifest reads as the list reads other plugins', and
 //! it is marked as reaching the network, which it does. `cargo test` runs
 //! it with the rest.
 
@@ -39,7 +39,7 @@ fn the_plugin_file_keeps_the_contract() {
 }
 
 #[test]
-fn the_plugin_file_is_read_as_the_dialog_reads_others() {
+fn the_plugin_file_is_read_as_the_list_reads_others() {
     let data = std::fs::read(ours()).unwrap();
     let manifest = oxiguitar_plugin_manager::install::manifest_of(&data).unwrap();
     assert_eq!(manifest.id, oxiguitar_plugin_manager::ID);
@@ -49,7 +49,7 @@ fn the_plugin_file_is_read_as_the_dialog_reads_others() {
     );
 }
 
-/// OxiGuitar lists the plugin among what it found, as the dialog will be
+/// OxiGuitar lists the plugin among what it found, as the window will be
 /// told, and installing it in a user's folder makes a copy OxiGuitar uses.
 #[test]
 fn a_plugin_file_installed_in_the_user_s_folder_is_found_there() {

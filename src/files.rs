@@ -15,7 +15,7 @@ use std::path::{Path, PathBuf};
 
 use oxiguitar_plugin::{PluginFile, PluginFileState, PluginFolderKind};
 
-/// A plugin file, as the dialog shows it.
+/// A plugin file, as the window shows it.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Entry {
     /// The file.
@@ -37,7 +37,7 @@ pub struct Entry {
 }
 
 impl Entry {
-    /// The dialog's entry for a file OxiGuitar found.
+    /// The list's entry for a file OxiGuitar found.
     pub fn of(file: PluginFile) -> Entry {
         let path = PathBuf::from(&file.path);
         let name = if file.name.is_empty() {
@@ -95,7 +95,7 @@ impl Entry {
     }
 }
 
-/// Whether a copy in a folder of `kind` may be deleted from the dialog
+/// Whether a copy in a folder of `kind` may be deleted from the window
 /// (`macos` for the macOS app, whose own folder is inside its bundle).
 pub fn may_delete(kind: PluginFolderKind, macos: bool) -> bool {
     match kind {

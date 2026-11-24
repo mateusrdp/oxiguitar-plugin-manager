@@ -3,7 +3,7 @@
 
 //! The newest release of each plugin, from GitHub (Mateus, 24 Nov 2026: the
 //! releases of the repository a plugin's manifest names as its homepage,
-//! asked each time the dialog opens).
+//! asked each time the window opens).
 //!
 //! A plugin whose homepage is `https://github.com/OWNER/REPO` is looked up
 //! at `api.github.com/repos/OWNER/REPO/releases`. Pre-releases count, since

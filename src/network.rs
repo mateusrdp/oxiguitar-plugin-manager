@@ -3,7 +3,7 @@
 
 //! Whether a plugin file can reach the network, from the functions it
 //! imports (Mateus, 24 Nov 2026: no manifest key, which authors wouldn't
-//! fill in and could get wrong; only a quick look when the dialog opens).
+//! fill in and could get wrong; only a quick look when the window opens).
 //!
 //! A plugin is a shared library, and the system's network calls live in
 //! the system's libraries: a plugin that opens a connection imports
@@ -13,7 +13,7 @@
 //! CFNetwork frameworks). Rust links only the code a library uses, so a
 //! plugin that never connects imports none of them. It is a strong hint,
 //! not a proof: a plugin could find those functions at run time, or make
-//! the system calls itself, and the dialog says so.
+//! the system calls itself, and the manual says so.
 
 use std::path::Path;
 

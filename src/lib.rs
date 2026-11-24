@@ -2,40 +2,42 @@
 // Copyright (C) 2026 Mateus Rocha de Paula and the OxiGuitar contributors
 
 //! A plugin for OxiGuitar that manages the others (plugin interface 1.15;
-//! mateusrdp/oxiguitar#344). Plugins → Plugin Manager… opens its dialog:
+//! mateusrdp/oxiguitar#344). Plugins → Plugin Manager… opens its own window:
 //! every plugin file OxiGuitar found, every copy of a plugin included, with
-//! its version, its folder, whether OxiGuitar uses it, whether it can reach
-//! the network, and the newest release; from there the user updates a
-//! plugin, installs a plugin file they downloaded, or deletes a copy.
+//! its name (after `!` when it can reach the network), version and path;
+//! Add… copies a plugin file into the user's folder, Update puts in the
+//! newest release, and the red X deletes a copy outside the system's
+//! folders, once confirmed.
 //!
-//! - `dialog` is what the user sees, and does what they ask.
-//! - `files` turns what OxiGuitar found (`Host::plugin_files`) into the
-//!   dialog's rows: what each copy is, and whether it may be deleted (never
-//!   one in a system folder).
+//! - `ui` is its UI: `ui/manager.slint`, which OxiGuitar compiles and shows
+//!   with its own Slint (#346); the plugin sets properties and hears
+//!   callbacks, and draws nothing itself.
+//! - `manager` is what the window shows and what its buttons do.
+//! - `files` turns what OxiGuitar found into the list's entries, and
+//!   whether each may be deleted (never one in a system folder).
 //! - `network` tells from a plugin file's imported functions whether it can
 //!   reach the network: no manifest says so (Mateus, 24 Nov 2026: authors
 //!   wouldn't fill it in and could say anything), and the import table
 //!   reads in milliseconds.
 //! - `releases` asks GitHub for the newest release of each plugin whose
-//!   homepage is a GitHub repository, each time the dialog opens.
+//!   homepage is a GitHub repository, each time the window opens.
 //! - `install` puts files in the user's plugin folder: a file the user
 //!   chose, or a release's file for this system.
 //!
-//! Unlike OxiGuitar and its other plugins, this plugin goes to the network
-//! (github.com) every time its dialog opens, and only then. It sends
-//! nothing about the user: each request names a repository. It is not one
-//! of the plugins OxiGuitar suggests (#344): no package recommends it, and
-//! OxiGuitar's manual doesn't list it.
+//! The plugin goes to the network (github.com) each time its window opens,
+//! and when the user updates a plugin; each request names a repository and
+//! nothing else.
 
 use std::sync::Arc;
 
-use oxiguitar_plugin::{Error, Host, Plugin, Tab, Tool};
+use oxiguitar_plugin::{Error, Host, Plugin, Tool};
 
-pub mod dialog;
 pub mod files;
 pub mod install;
+pub mod manager;
 pub mod network;
 pub mod releases;
+pub mod ui;
 
 /// The plugin's id.
 pub const ID: &str = "oxiguitar.plugin-manager";
@@ -46,18 +48,27 @@ pub const TOOL: &str = "manage";
 /// The plugin.
 #[derive(Debug)]
 pub struct ManagerPlugin {
-    tool: dialog::ManageTool,
-    dialog: dialog::Dialog,
+    tool: ManageTool,
+    ui: ui::Ui,
+}
+
+/// Plugins → Plugin Manager…: opens the window.
+#[derive(Debug)]
+struct ManageTool(Arc<ui::ManagerUi>);
+
+impl Tool for ManageTool {
+    fn run(&self) -> Result<String, Error> {
+        Ok(self.0.open())
+    }
 }
 
 impl Plugin for ManagerPlugin {
     fn start(host: Host) -> Result<ManagerPlugin, Error> {
-        let shared = Arc::new(dialog::Shared::new(host));
+        let shared = Arc::new(manager::Shared::new(host.clone()));
+        let ui = Arc::new(ui::ManagerUi::new(host, shared));
         Ok(ManagerPlugin {
-            tool: dialog::ManageTool {
-                shared: shared.clone(),
-            },
-            dialog: dialog::Dialog { shared },
+            tool: ManageTool(ui.clone()),
+            ui: ui::Ui(ui),
         })
     }
 
@@ -65,8 +76,8 @@ impl Plugin for ManagerPlugin {
         (id == TOOL).then_some(&self.tool as &dyn Tool)
     }
 
-    fn tab(&self, id: &str) -> Option<&dyn Tab> {
-        (id == dialog::DIALOG).then_some(&self.dialog as &dyn Tab)
+    fn ui(&self) -> Option<&dyn oxiguitar_plugin::Ui> {
+        Some(&self.ui)
     }
 }
 

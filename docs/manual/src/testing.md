@@ -51,4 +51,4 @@ The script exits with 0 when everything passed, 1 when something failed, and 2 w
 
 A new feature comes with its tests and a row on the [Features](features.md) page, in the same pull request. The script fails until the row names tests that exist.
 
-The tests never go to the network: what GitHub answers is checked with lists made in the tests, and the dialog's tests use plugins whose homepages aren't on GitHub.
+The tests never go to the network: what GitHub answers is checked with lists made in the tests, and the list's tests use plugins whose homepages aren't on GitHub.

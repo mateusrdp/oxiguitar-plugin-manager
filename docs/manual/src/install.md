@@ -27,4 +27,4 @@ xattr -d com.apple.quarantine ~/Library/Application\ Support/OxiGuitar/plugins/*
 
 ## Removing it
 
-Delete `plugin-manager.oxp` from your plugins folder (or press Delete on its line in its own dialog), and start OxiGuitar again.
+Delete `plugin-manager.oxp` from your plugins folder (or press the red X on its line in its own window), and start OxiGuitar again.

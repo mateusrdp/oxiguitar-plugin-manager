@@ -16,6 +16,7 @@ Thank you to the people whose work this plugin is built on.
 | [sha2](https://github.com/RustCrypto/hashes) | The RustCrypto developers | Checking downloads against SHA256SUMS | MIT OR Apache-2.0 |
 | [semver](https://github.com/dtolnay/semver) | David Tolnay | Comparing versions | MIT OR Apache-2.0 |
 | [rfd](https://github.com/PolyMeilex/rfd) | Bartłomiej Maryńczak and contributors | The system's file dialog | MIT |
+| [Slint](https://slint.dev) | SixtyFPS GmbH and contributors | The window: OxiGuitar compiles the plugin's `.slint` file with Slint's interpreter and draws it (the plugin doesn't carry Slint) | GPL-3.0-only (one of Slint's licences) |
 | [Rust](https://www.rust-lang.org/) and its standard library | The Rust Project | Everything else | MIT OR Apache-2.0 |
 
 ## Tools

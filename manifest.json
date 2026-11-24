@@ -8,9 +8,10 @@
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/mateusrdp/oxiguitar-plugin-manager",
   "tools": [
-    { "id": "manage", "name": "Plugin Manager…", "description": "Lists every plugin file with its version and the newest release, and updates, installs or deletes them.", "edits": false }
+    { "id": "manage", "name": "Plugin Manager…", "description": "Every plugin file, with its version and the newest release: add, update or delete them.", "edits": false }
   ],
-  "tabs": [
-    { "id": "manager", "title": "Plugin Manager", "area": "dialog" }
+  "views": [
+    { "id": "manager", "component": "ManagerWindow", "place": "window" },
+    { "id": "confirm", "component": "ConfirmDialog", "place": "window" }
   ]
 }

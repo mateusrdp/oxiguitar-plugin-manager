@@ -1,6 +1,6 @@
 # Plugin Manager
 
-The Plugin Manager is a plugin for [OxiGuitar](https://mateusrdp.github.io/oxiguitar/) that looks after your other plugins. It shows every copy of every plugin you have, with its version and the newest release, and lets you update a plugin, install a plugin file you downloaded, or delete a copy.
+The Plugin Manager is a plugin for [OxiGuitar](https://mateusrdp.github.io/oxiguitar/) that looks after your other plugins. It shows every copy of every plugin you have, with its version and the newest release, and lets you update a plugin, add a plugin file you downloaded, or delete a copy.
 
 ## Some background
 
@@ -14,6 +14,4 @@ The same plugin can be in more than one of them. OxiGuitar uses the copy with th
 
 ## It goes to the internet
 
-OxiGuitar and its other plugins never use the network. This one does: **each time you open it, it asks github.com for the newest release of every plugin whose homepage is on GitHub**, and it downloads a release when you press Update. It sends nothing about you or your files: each question names a plugin's repository, as your browser would when you open its releases page. That is why OxiGuitar doesn't suggest it, no package recommends it, and its manual doesn't list it. Install it only if you want this.
-
-
+This plugin uses the network: **each time you open it, it asks github.com for the newest release of every plugin whose homepage is on GitHub**, and it downloads a release when you press Update. It sends nothing about you or your files: each question names a plugin's repository, as your browser would when you open its releases page.
