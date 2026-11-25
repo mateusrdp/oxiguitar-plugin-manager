@@ -527,12 +527,15 @@ mod tests {
         // In the user's folder.
         let copies = [copy(user.join("a.oxp"), PluginFolderKind::User)];
         assert_eq!(update_folder(&copies, "a.b", &user), (user.clone(), None));
-        // Beside a portable program, whose folder can be written: there.
+        // Beside a portable program, whose folder can be written: there;
+        // but never inside the macOS app, which would break its signature.
         let copies = [copy(portable.join("a.oxp"), PluginFolderKind::Program)];
-        assert_eq!(
-            update_folder(&copies, "a.b", &user),
+        let expected = if cfg!(target_os = "macos") {
+            (user.clone(), Some(portable.join("a.oxp")))
+        } else {
             (portable.clone(), None)
-        );
+        };
+        assert_eq!(update_folder(&copies, "a.b", &user), expected);
         // Beside an AppImage's program, which can't be written: the
         // user's folder, and that copy stays in use.
         let appimage = dir.join("mounted").join("a.oxp");
