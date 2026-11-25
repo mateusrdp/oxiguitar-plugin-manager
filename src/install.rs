@@ -15,10 +15,7 @@
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
-use object::read::macho::{FatArch, MachOFatFile32, MachOFatFile64};
-use object::{FileKind, Object, ObjectSection};
 use oxiguitar_plugin::api::manifest::Manifest;
-use oxiguitar_plugin::api::{MANIFEST_SECTION, PE_MANIFEST_SECTION};
 use sha2::{Digest, Sha256};
 
 /// A part of a name left by a write that didn't finish.
@@ -27,29 +24,11 @@ const PART: &str = ".part";
 /// A part of a name a replaced copy is given until it can be removed.
 const OLD: &str = ".old";
 
-/// The manifest of the plugin file in `data` (the first build's in a
-/// universal macOS file), read as OxiGuitar reads it, without running any
-/// of its code.
+/// The manifest of the plugin file in `data`, its first member (#347), read
+/// as OxiGuitar reads it, without running any of its code.
 pub fn manifest_of(data: &[u8]) -> Result<Manifest, String> {
-    let not = || "it isn't an OxiGuitar plugin".to_owned();
-    let build = match FileKind::parse(data).map_err(|_| not())? {
-        FileKind::MachOFat32 => MachOFatFile32::parse(data)
-            .ok()
-            .and_then(|f| f.arches().first()?.data(data).ok()),
-        FileKind::MachOFat64 => MachOFatFile64::parse(data)
-            .ok()
-            .and_then(|f| f.arches().first()?.data(data).ok()),
-        _ => Some(data),
-    }
-    .ok_or_else(not)?;
-    let file = object::File::parse(build).map_err(|_| not())?;
-    let section = file
-        .section_by_name(MANIFEST_SECTION)
-        .or_else(|| file.section_by_name(PE_MANIFEST_SECTION))
-        .ok_or_else(not)?;
-    let bytes = section.data().map_err(|_| not())?;
-    let end = bytes.iter().rposition(|&b| b != 0).map_or(0, |i| i + 1);
-    Manifest::parse(&bytes[..end]).map_err(|why| format!("its manifest is wrong ({why})"))
+    let parts = crate::oxp::parts(data)?;
+    Manifest::parse(parts.manifest).map_err(|why| format!("its manifest is wrong ({why})"))
 }
 
 /// Writes `data` at `to`, replacing what is there.
