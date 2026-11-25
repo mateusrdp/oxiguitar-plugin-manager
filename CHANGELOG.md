@@ -4,6 +4,8 @@ All notable changes to the Plugin Manager. The format follows [Keep a Changelog]
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-25
+
 ### Changed
 
 - **Plugin files are archives** (mateusrdp/oxiguitar#347, plugin interface 1.16). The Plugin Manager reads a plugin file's manifest and library from the archive without unpacking it, and says when a file is of the format before OxiGuitar 0.23. Its own file is packed that way (`build-oxp.sh`), with `ui/manager.slint` beside the library, which the manifest names (`ui`). It needs the OxiGuitar after 0.22.0; the SDK is at OxiGuitar v0.23.0.

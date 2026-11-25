@@ -2,7 +2,7 @@
   "interface": "1.16",
   "id": "oxiguitar.plugin-manager",
   "name": "Plugin Manager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Every copy of every plugin with its version and the newest release: update, install a plugin file you downloaded, delete copies. It goes to github.com each time it opens.",
   "authors": ["Mateus Rocha de Paula", "The OxiGuitar contributors"],
   "license": "GPL-3.0-or-later",
