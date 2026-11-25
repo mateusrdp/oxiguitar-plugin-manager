@@ -1,5 +1,5 @@
 {
-  "interface": "1.15",
+  "interface": "1.16",
   "id": "oxiguitar.plugin-manager",
   "name": "Plugin Manager",
   "version": "0.1.0",
@@ -10,6 +10,7 @@
   "tools": [
     { "id": "manage", "name": "Plugin Manager…", "description": "Every plugin file, with its version and the newest release: add, update or delete them.", "edits": false }
   ],
+  "ui": "ui/manager.slint",
   "views": [
     { "id": "manager", "component": "ManagerWindow", "place": "window" },
     { "id": "confirm", "component": "ConfirmDialog", "place": "window" }

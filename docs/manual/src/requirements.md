@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- OxiGuitar with plugin interface 1.15 (the release after 0.21.9), which shows plugins' own UI in Slint. See [the OxiGuitar manual](https://mateusrdp.github.io/oxiguitar/).
+- OxiGuitar with plugin interface 1.16 (the release after 0.22.0), which reads plugin files as archives and shows plugins' own UI in Slint from them. See [the OxiGuitar manual](https://mateusrdp.github.io/oxiguitar/).
 - Windows, macOS or Linux.
 - A connection to github.com, for the newest releases and updates. Listing, installing and deleting work without one. OxiGuitar's Flatpak has no network unless you allow it ([How to use it](use-cases.md#when-it-cant-check)).
 

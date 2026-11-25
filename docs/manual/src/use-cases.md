@@ -19,7 +19,7 @@ Open the window and read the list. A plugin with two lines has two copies. OxiGu
 
 ## Update a plugin
 
-When a plugin's newest release is newer than every copy you have, its first line has **Update to 0.3.0**. Press it. The plugin downloads that release's file for your system, checks it against the release's `SHA256SUMS` file, and puts it in your plugin folder under the name its packages use (`gp5.oxp`, say). Your older copies of that plugin in your folder are deleted. A copy in a system folder stays, and OxiGuitar uses the newer one in your folder instead. Start OxiGuitar again to use it.
+When a plugin's newest release is newer than every copy you have, its first line has **Update to 0.3.0**. Press it. The plugin downloads that release's file for your system, checks it against the release's `SHA256SUMS` file, and puts it under the name its packages use (`gp5.oxp`, say) where the copy OxiGuitar uses is, or in your plugin folder when it can't write there. The older copies of that plugin in that folder are deleted. A copy in a system folder stays, and OxiGuitar uses the one in your folder instead. A copy that came inside an AppImage or the macOS app also stays, and OxiGuitar keeps using it: the window says so, and a newer OxiGuitar brings its update. Start OxiGuitar again to use it.
 
 The Plugin Manager can update itself the same way.
 

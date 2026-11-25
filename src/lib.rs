@@ -36,6 +36,7 @@ pub mod files;
 pub mod install;
 pub mod manager;
 pub mod network;
+pub mod oxp;
 pub mod releases;
 pub mod ui;
 

@@ -4,6 +4,12 @@ All notable changes to the Plugin Manager. The format follows [Keep a Changelog]
 
 ## [Unreleased]
 
+### Changed
+
+- **Plugin files are archives** (mateusrdp/oxiguitar#347, plugin interface 1.16). The Plugin Manager reads a plugin file's manifest and library from the archive without unpacking it, and says when a file is of the format before OxiGuitar 0.23. Its own file is packed that way (`build-oxp.sh`), with `ui/manager.slint` beside the library, which the manifest names (`ui`). It needs the OxiGuitar after 0.22.0; the SDK is at OxiGuitar v0.23.0.
+- **Update goes where OxiGuitar looks**: OxiGuitar now uses the copy in the folder it searches last, whatever the versions (beside the program, then yours, then the system's), so an update is written where the copy in use is when the plugin may write there (your folder, or beside a portable copy), and into your folder otherwise; when a copy inside an AppImage or the macOS app stays in use, the window says so.
+- `scripts/test-all.py` 1.1.0, as in every repository.
+
 ## [0.1.0] - 2026-11-24
 
 ### Added

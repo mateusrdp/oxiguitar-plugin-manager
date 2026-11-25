@@ -11,8 +11,12 @@
 //!
 //! What the user does happens at once, and only in the user's plugin folder
 //! or to a copy that isn't in a system folder: **Add…** copies a `.oxp`
-//! there, **Update** puts the newest release's file there (replacing the
-//! user's older copies), **X** deletes a copy once confirmed. OxiGuitar
+//! there, **Update** puts the newest release's file where the copy
+//! OxiGuitar uses is, when that folder can be written, or else in the
+//! user's folder (replacing the older copies in that folder), **X** deletes
+//! a copy once confirmed. OxiGuitar uses the copy in the folder it searches
+//! last, whatever the versions (mateusrdp/oxiguitar#347): beside the
+//! program, then the user's, then the system's. OxiGuitar
 //! reads its plugin folders when it starts, so each change is used from
 //! the next start.
 
@@ -301,7 +305,7 @@ impl Shared {
                     manifest.name, manifest.version
                 );
                 s.put(Copy {
-                    entry: added(&to, &manifest),
+                    entry: added(&to, &manifest, PluginFolderKind::User),
                     network,
                 });
             }
@@ -349,10 +353,22 @@ impl Shared {
         Some((s.generation, id, release))
     }
 
-    /// Off the window's thread: puts `release` of `id` in the user's folder;
-    /// the user's older copies go.
+    /// Off the window's thread: puts `release` of `id` in the folder of the
+    /// copy OxiGuitar uses when it may be written there, or else in the
+    /// user's folder; that folder's older copies go.
     pub fn update(&self, generation: u64, id: &str, release: &Release) {
-        let user_folder = self.state().user_folder.clone();
+        let (folder, kept, kind) = {
+            let s = self.state();
+            let (folder, kept) = update_folder(&s.copies, id, &s.user_folder);
+            // The folder's kind, from a copy OxiGuitar found there.
+            let kind = s
+                .copies
+                .iter()
+                .find(|c| c.entry.path.parent() == Some(folder.as_path()))
+                .map_or(PluginFolderKind::User, |c| c.entry.folder);
+            (folder, kept, kind)
+        };
+        let user_folder = folder;
         let result = (|| -> Result<Vec<(PathBuf, Vec<u8>)>, String> {
             let zip = self.checker.download(&release.zip)?;
             if let Some(sums) = &release.sums {
@@ -401,15 +417,23 @@ impl Shared {
                         if let Ok(manifest) = install::manifest_of(data) {
                             let network = network::uses_network(data).unwrap_or(false);
                             s.put(Copy {
-                                entry: added(to, &manifest),
+                                entry: added(to, &manifest, kind),
                                 network,
                             });
                         }
                     }
-                    s.status = format!(
-                        "Updated {name} to {}. OxiGuitar uses it when it starts again.",
-                        release.version
-                    );
+                    s.status = match &kept {
+                        None => format!(
+                            "Updated {name} to {}. OxiGuitar uses it when it starts again.",
+                            release.version
+                        ),
+                        Some(used) => format!(
+                            "Put {name} {} in your plugin folder, but OxiGuitar keeps using {}, \
+                             which comes with it.",
+                            release.version,
+                            used.display()
+                        ),
+                    };
                 }
                 Err(why) => s.status = format!("{name} can't be updated: {why}."),
             }
@@ -417,11 +441,38 @@ impl Shared {
     }
 }
 
-/// The list's entry for a file put in the user's folder.
-fn added(path: &Path, manifest: &oxiguitar_plugin::api::manifest::Manifest) -> Entry {
+/// Where an update of `id` goes: the folder of the copy OxiGuitar uses when
+/// it may be written there, or else `user_folder`; with the copy that
+/// stays in use, when it is one beside the program that can't be replaced
+/// (an AppImage's or the macOS app's), which comes before the user's.
+pub fn update_folder(copies: &[Copy], id: &str, user_folder: &Path) -> (PathBuf, Option<PathBuf>) {
+    let used = copies
+        .iter()
+        .find(|c| c.entry.id.as_deref() == Some(id) && c.entry.used());
+    match used {
+        Some(c) if c.entry.deletable => (
+            c.entry
+                .path
+                .parent()
+                .map_or_else(|| user_folder.to_path_buf(), Path::to_path_buf),
+            None,
+        ),
+        Some(c) if c.entry.folder == PluginFolderKind::Program => {
+            (user_folder.to_path_buf(), Some(c.entry.path.clone()))
+        }
+        _ => (user_folder.to_path_buf(), None),
+    }
+}
+
+/// The list's entry for a file put in a folder of `folder`'s kind.
+fn added(
+    path: &Path,
+    manifest: &oxiguitar_plugin::api::manifest::Manifest,
+    folder: PluginFolderKind,
+) -> Entry {
     Entry {
         path: path.to_path_buf(),
-        folder: PluginFolderKind::User,
+        folder,
         id: Some(manifest.id.clone()),
         name: manifest.name.clone(),
         version: semver::Version::parse(&manifest.version.to_string()).ok(),
@@ -461,6 +512,45 @@ mod tests {
             state: PluginFileState::Used,
             loaded: false,
         }
+    }
+
+    #[test]
+    fn an_update_goes_where_the_used_copy_is_when_it_can() {
+        let dir = std::env::temp_dir().join(format!("pm-update-{}", std::process::id()));
+        let user = dir.join("user");
+        let portable = dir.join("portable");
+        std::fs::create_dir_all(&portable).unwrap();
+        let copy = |path: PathBuf, folder| Copy {
+            entry: Entry::of(file(&path, folder, "a.b", "0.1.0")),
+            network: false,
+        };
+        // In the user's folder.
+        let copies = [copy(user.join("a.oxp"), PluginFolderKind::User)];
+        assert_eq!(update_folder(&copies, "a.b", &user), (user.clone(), None));
+        // Beside a portable program, whose folder can be written: there;
+        // but never inside the macOS app, which would break its signature.
+        let copies = [copy(portable.join("a.oxp"), PluginFolderKind::Program)];
+        let expected = if cfg!(target_os = "macos") {
+            (user.clone(), Some(portable.join("a.oxp")))
+        } else {
+            (portable.clone(), None)
+        };
+        assert_eq!(update_folder(&copies, "a.b", &user), expected);
+        // Beside an AppImage's program, which can't be written: the
+        // user's folder, and that copy stays in use.
+        let appimage = dir.join("mounted").join("a.oxp");
+        let copies = [copy(appimage.clone(), PluginFolderKind::Program)];
+        assert_eq!(
+            update_folder(&copies, "a.b", &user),
+            (user.clone(), Some(appimage))
+        );
+        // A package's: the user's folder, which comes after it.
+        let copies = [copy(
+            dir.join("system").join("a.oxp"),
+            PluginFolderKind::System,
+        )];
+        assert_eq!(update_folder(&copies, "a.b", &user), (user.clone(), None));
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     fn release(v: &str) -> Release {

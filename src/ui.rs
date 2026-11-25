@@ -193,11 +193,9 @@ fn index(args: &[Value]) -> Option<usize> {
 #[derive(Debug)]
 pub struct Ui(pub Arc<ManagerUi>);
 
+/// The `.slint` file is `ui/manager.slint` in the plugin file, which the
+/// manifest names (interface 1.16): OxiGuitar compiles it from there.
 impl oxiguitar_plugin::Ui for Ui {
-    fn source(&self) -> String {
-        include_str!("../ui/manager.slint").into()
-    }
-
     fn callback(&self, view: &str, callback: &str, args: Vec<Value>) -> Result<(), Error> {
         let ui = &self.0;
         match (view, callback) {
@@ -273,8 +271,8 @@ mod tests {
 
     #[test]
     fn the_file_has_both_views_with_what_the_plugin_sets_and_hears() {
-        let compiled =
-            oxiguitar_plugin_test::compile_ui(include_str!("../ui/manager.slint").into()).unwrap();
+        let file = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("ui/manager.slint");
+        let compiled = oxiguitar_plugin_test::compile_ui_file(&file).unwrap();
         let manager = compiled.component("ManagerWindow").unwrap();
         assert_eq!(manager.properties, ["busy", "lines", "status"]);
         assert_eq!(manager.callbacks, ["add", "close", "remove", "update"]);
