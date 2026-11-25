@@ -29,7 +29,8 @@ OxiGuitar reads its plugin folders when it starts, so changes are used the
 next time you start it.
 
 The window is a Slint file OxiGuitar shows with its own widgets and style
-(plugin interface 1.15); the plugin draws nothing itself.
+(plugin interface 1.16, its file packed in the plugin's `.oxp`); the
+plugin draws nothing itself.
 
 ## Manual
 

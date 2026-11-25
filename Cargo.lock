@@ -279,6 +279,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "filetime"
+version = "0.2.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1255e7a9f1902190d4c10a75f2f7f495d3d3ce13e9ba26e6c48683a0f4dbed7"
+dependencies = [
+ "cfg-if",
+ "libc",
+]
+
+[[package]]
 name = "find-msvc-tools"
 version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -794,20 +804,21 @@ dependencies = [
 
 [[package]]
 name = "oxiguitar-host"
-version = "0.21.9"
-source = "git+https://github.com/mateusrdp/oxiguitar?rev=31164bb4d3eb3662fb5cf42bc14c9d518c731334#31164bb4d3eb3662fb5cf42bc14c9d518c731334"
+version = "0.22.0"
+source = "git+https://github.com/mateusrdp/oxiguitar?rev=b88431f763df71c66fe4f54f8ee4a5d0663dbec1#b88431f763df71c66fe4f54f8ee4a5d0663dbec1"
 dependencies = [
  "libc",
  "libloading",
  "object",
  "oxiguitar-plugin-api",
  "serde_json",
+ "tar",
 ]
 
 [[package]]
 name = "oxiguitar-plugin"
-version = "1.15.0"
-source = "git+https://github.com/mateusrdp/oxiguitar?rev=31164bb4d3eb3662fb5cf42bc14c9d518c731334#31164bb4d3eb3662fb5cf42bc14c9d518c731334"
+version = "1.16.0"
+source = "git+https://github.com/mateusrdp/oxiguitar?rev=b88431f763df71c66fe4f54f8ee4a5d0663dbec1#b88431f763df71c66fe4f54f8ee4a5d0663dbec1"
 dependencies = [
  "oxiguitar-plugin-api",
  "serde_json",
@@ -815,8 +826,8 @@ dependencies = [
 
 [[package]]
 name = "oxiguitar-plugin-api"
-version = "1.15.0"
-source = "git+https://github.com/mateusrdp/oxiguitar?rev=31164bb4d3eb3662fb5cf42bc14c9d518c731334#31164bb4d3eb3662fb5cf42bc14c9d518c731334"
+version = "1.16.0"
+source = "git+https://github.com/mateusrdp/oxiguitar?rev=b88431f763df71c66fe4f54f8ee4a5d0663dbec1#b88431f763df71c66fe4f54f8ee4a5d0663dbec1"
 dependencies = [
  "miniz_oxide",
  "postcard",
@@ -835,18 +846,20 @@ dependencies = [
  "rfd",
  "semver",
  "sha2",
+ "tar",
  "ureq",
  "zip",
 ]
 
 [[package]]
 name = "oxiguitar-plugin-test"
-version = "1.15.0"
-source = "git+https://github.com/mateusrdp/oxiguitar?rev=31164bb4d3eb3662fb5cf42bc14c9d518c731334#31164bb4d3eb3662fb5cf42bc14c9d518c731334"
+version = "1.16.0"
+source = "git+https://github.com/mateusrdp/oxiguitar?rev=b88431f763df71c66fe4f54f8ee4a5d0663dbec1#b88431f763df71c66fe4f54f8ee4a5d0663dbec1"
 dependencies = [
  "i-slint-compiler",
  "libc",
  "oxiguitar-host",
+ "serde_json",
 ]
 
 [[package]]
@@ -1210,6 +1223,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 3.0.10",
+]
+
+[[package]]
+name = "tar"
+version = "0.4.46"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f6221d9a6003c78398e3b239969f352578258df48c8eb051caadae0015bc840"
+dependencies = [
+ "filetime",
+ "libc",
 ]
 
 [[package]]

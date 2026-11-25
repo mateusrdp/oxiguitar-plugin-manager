@@ -53,9 +53,14 @@ pub fn is_network_import(library: &str, name: &str) -> bool {
         })
 }
 
-/// Whether the library in `data` imports a network call; a universal macOS
-/// file when any of its builds does.
+/// Whether the plugin file in `data` imports a network call (its library,
+/// #347); a universal macOS file when any of its builds does.
 pub fn uses_network(data: &[u8]) -> Result<bool, String> {
+    library_uses_network(crate::oxp::parts(data)?.library)
+}
+
+/// Whether the library in `data` imports a network call.
+fn library_uses_network(data: &[u8]) -> Result<bool, String> {
     let kind = FileKind::parse(data).map_err(|_| "not a library file".to_owned())?;
     match kind {
         FileKind::MachOFat32 => {
