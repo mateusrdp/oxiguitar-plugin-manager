@@ -1,0 +1,137 @@
+{
+  "nodes": [
+    {
+      "id": "file:docs/manual/src/README.md",
+      "type": "file",
+      "name": "README.md",
+      "summary": "Manual front matter: title Plugin Manager, description Manages other OxiGuitar plugins (add, update, delete).",
+      "tags": ["manual", "frontmatter", "documentation"],
+      "complexity": 1,
+      "filePath": "docs/manual/src/README.md"
+    },
+    {
+      "id": "file:docs/manual/src/SUMMARY.md",
+      "type": "file",
+      "name": "SUMMARY.md",
+      "summary": "mdBook table of contents: Plugin Manager (README), How It Works, Requirements, Features, Installation, Use Cases, Testing, Credits.",
+      "tags": ["manual", "toc", "mdbook"],
+      "complexity": 1,
+      "filePath": "docs/manual/src/SUMMARY.md"
+    },
+    {
+      "id": "file:docs/manual/src/credits.md",
+      "type": "file",
+      "name": "credits.md",
+      "summary": "Credits: OxiGuitar project, Slint UI toolkit, semver for version comparison, ureq for HTTP, zip/tar for archive handling.",
+      "tags": ["manual", "credits", "acknowledgments"],
+      "complexity": 1,
+      "filePath": "docs/manual/src/credits.md"
+    },
+    {
+      "id": "file:docs/manual/src/features.md",
+      "type": "file",
+      "name": "features.md",
+      "summary": "Features table: listing plugin files with name/version/path, network detection (! prefix), Add plugin files, Update from GitHub releases, Delete copies, System folder protection, Version comparison with semver.",
+      "tags": ["manual", "features", "documentation"],
+      "complexity": 2,
+      "filePath": "docs/manual/src/features.md"
+    },
+    {
+      "id": "file:docs/manual/src/how-it-works.md",
+      "type": "file",
+      "name": "how-it-works.md",
+      "summary": "Architecture overview: Plugin Manager as an OxiGuitar plugin using interface 1.15. Components: manager (state machine), files (entry display), network (import analysis), releases (GitHub API), install (file operations), ui (Slint views). Thread model: UI on OxiGuitar's thread, network/file work on plugin's threads.",
+      "tags": ["manual", "architecture", "design"],
+      "complexity": 3,
+      "filePath": "docs/manual/src/how-it-works.md"
+    },
+    {
+      "id": "file:docs/manual/src/install.md",
+      "type": "file",
+      "name": "install.md",
+      "summary": "Installation guide: building from source (cargo build --release), installing .oxp files, plugin folder configuration.",
+      "tags": ["manual", "installation", "getting-started"],
+      "complexity": 2,
+      "filePath": "docs/manual/src/install.md"
+    },
+    {
+      "id": "file:docs/manual/src/requirements.md",
+      "type": "file",
+      "name": "requirements.md",
+      "summary": "System requirements: OxiGuitar with plugin interface 1.15+, Rust toolchain for building, network access for update checking (github.com), platform support (Linux, Windows, macOS).",
+      "tags": ["manual", "requirements", "system-requirements"],
+      "complexity": 1,
+      "filePath": "docs/manual/src/requirements.md"
+    },
+    {
+      "id": "file:docs/manual/src/testing.md",
+      "type": "file",
+      "name": "testing.md",
+      "summary": "Testing documentation: test-all.py runner, suite.json test definitions, corpus testing, contract tests, feature coverage verification, CI integration.",
+      "tags": ["manual", "testing", "ci"],
+      "complexity": 2,
+      "filePath": "docs/manual/src/testing.md"
+    },
+    {
+      "id": "file:docs/manual/src/use-cases.md",
+      "type": "file",
+      "name": "use-cases.md",
+      "summary": "Use cases: adding third-party plugins, updating plugins to newest releases, removing outdated copies, managing plugins across system/user/program folders, understanding network capability of plugins.",
+      "tags": ["manual", "use-cases", "user-guide"],
+      "complexity": 2,
+      "filePath": "docs/manual/src/use-cases.md"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/README.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/how-it-works.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/requirements.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/features.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/install.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/use-cases.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/testing.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/SUMMARY.md",
+      "target": "file:docs/manual/src/credits.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/how-it-works.md",
+      "target": "file:docs/manual/src/features.md",
+      "type": "references"
+    },
+    {
+      "source": "file:docs/manual/src/install.md",
+      "target": "file:docs/manual/src/requirements.md",
+      "type": "references"
+    }
+  ]
+}
