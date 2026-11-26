@@ -1,0 +1,113 @@
+{
+  "nodes": [
+    {
+      "id": "file:.github/workflows/ci.yml",
+      "type": "file",
+      "name": "ci.yml",
+      "summary": "Main CI pipeline: formatting, lint, tests, licence check and sign-off verification. Runs on PRs and pushes to develop/main. Contains 7 jobs (rust, fmt, lint, test, deny, dco, ci-success) that gate merges. Tests run on 6 platforms (Linux x86_64, Linux x86_64 MSRV, Linux ARM64, Windows x86_64, Windows ARM64, macOS). Lints run on MSRV to prevent breaking contributor machines.",
+      "tags": ["ci", "github-actions", "rust", "testing", "linting", "licensing"],
+      "complexity": 4,
+      "filePath": ".github/workflows/ci.yml"
+    },
+    {
+      "id": "file:.github/workflows/docs.yml",
+      "type": "file",
+      "name": "docs.yml",
+      "summary": "Manual (mdBook) build and GitHub Pages deployment. On PRs touching docs/manual/: builds and checks internal links. On pushes to main: builds and publishes to https://mateusrdp.github.io/oxiguitar-plugin-manager/. Two jobs: build (mdBook install, build, link check) and deploy (GitHub Pages deployment).",
+      "tags": ["ci", "github-actions", "documentation", "mdbook", "github-pages"],
+      "complexity": 3,
+      "filePath": ".github/workflows/docs.yml"
+    },
+    {
+      "id": "file:.github/workflows/publish.yml",
+      "type": "file",
+      "name": "publish.yml",
+      "summary": "Triggers on GitHub release publication. Delegates to oxiguitar-packages' plugin-publish.yml reusable workflow to tell package repositories and winget about new releases. Requires PACKAGES_TOKEN and WINGET_TOKEN secrets.",
+      "tags": ["ci", "github-actions", "release", "publishing"],
+      "complexity": 1,
+      "filePath": ".github/workflows/publish.yml"
+    },
+    {
+      "id": "file:.github/workflows/release.yml",
+      "type": "file",
+      "name": "release.yml",
+      "summary": "Test builds and release creation. Delegates to oxiguitar-packages' plugin-release.yml reusable workflow. Runs build-oxp.sh on Linux (x86_64, ARM64), Windows (x86_64, ARM64) and macOS. On PRs/develop/main: creates test builds with ~dev version. On v* tags: creates a DRAFT release; publishing the draft starts publish.yml.",
+      "tags": ["ci", "github-actions", "release", "build"],
+      "complexity": 2,
+      "filePath": ".github/workflows/release.yml"
+    },
+    {
+      "id": "mod:.github/workflows:ci-pipeline",
+      "type": "mod",
+      "name": "ci-pipeline",
+      "summary": "The CI pipeline orchestrates 7 jobs: rust (checks for Cargo.toml), fmt (rustfmt check), lint (clippy on MSRV + docs), test (6 platform matrix), deny (license/advisory check), dco (sign-off check on PRs), and ci-success (aggregates all results). Branch rules require ci-success before merging.",
+      "tags": ["ci", "pipeline", "orchestration"],
+      "complexity": 3,
+      "filePath": ".github/workflows/ci.yml"
+    },
+    {
+      "id": "mod:.github/workflows:docs-pipeline",
+      "type": "mod",
+      "name": "docs-pipeline",
+      "summary": "The documentation pipeline builds the mdBook manual, checks internal links, and optionally deploys to GitHub Pages. Uses a pinned mdBook version with SHA256 verification.",
+      "tags": ["ci", "documentation", "mdbook"],
+      "complexity": 2,
+      "filePath": ".github/workflows/docs.yml"
+    },
+    {
+      "id": "mod:.github/workflows:release-pipeline",
+      "type": "mod",
+      "name": "release-pipeline",
+      "summary": "The release pipeline coordinates test builds and tagged releases. On PRs/develop/main it creates test artifacts (kept 14 days). On v* tags it creates a draft release. Publish workflow sends events to package repos and winget.",
+      "tags": ["ci", "release", "build"],
+      "complexity": 2,
+      "filePath": ".github/workflows/release.yml"
+    },
+    {
+      "id": "function:.github/workflows/ci.yml:ci-success-aggregation",
+      "type": "function",
+      "name": "ci-success-aggregation",
+      "summary": "The ci-success job aggregates results from all other jobs. Passes only if every job passed (skipped is acceptable for DCO job on non-PR runs and Rust jobs without Cargo.toml). Fails on any failure or cancellation.",
+      "tags": ["ci", "aggregation", "gate"],
+      "complexity": 1,
+      "filePath": ".github/workflows/ci.yml"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:.github/workflows/ci.yml",
+      "target": "mod:.github/workflows:ci-pipeline",
+      "type": "contains"
+    },
+    {
+      "source": "file:.github/workflows/docs.yml",
+      "target": "mod:.github/workflows:docs-pipeline",
+      "type": "contains"
+    },
+    {
+      "source": "file:.github/workflows/release.yml",
+      "target": "mod:.github/workflows:release-pipeline",
+      "type": "contains"
+    },
+    {
+      "source": "file:.github/workflows/publish.yml",
+      "target": "mod:.github/workflows:release-pipeline",
+      "type": "references"
+    },
+    {
+      "source": "mod:.github/workflows:ci-pipeline",
+      "target": "function:.github/workflows/ci.yml:ci-success-aggregation",
+      "type": "contains"
+    },
+    {
+      "source": "file:.github/workflows/ci.yml",
+      "target": "file:.github/workflows/release.yml",
+      "type": "references"
+    },
+    {
+      "source": "file:.github/workflows/release.yml",
+      "target": "file:.github/workflows/publish.yml",
+      "type": "references"
+    }
+  ]
+}

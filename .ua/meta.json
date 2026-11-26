@@ -1,0 +1,43 @@
+{
+  "lastAnalyzedCommit": "3416ca166471de6d72ae67388348e7b6bbb20dad",
+  "graphCommit": "3416ca166471de6d72ae67388348e7b6bbb20dad",
+  "analyzedAt": "2026-11-26T22:00:00.000Z",
+  "graphVersion": "1.0.0",
+  "stats": {
+    "totalNodes": 111,
+    "totalEdges": 172,
+    "totalLayers": 6,
+    "totalTourStops": 7,
+    "filesScanned": 40,
+    "nodeTypes": {
+      "file": 40,
+      "mod": 10,
+      "function": 45,
+      "struct": 15,
+      "enum": 1
+    },
+    "edgeTypes": {
+      "contains": 76,
+      "references": 31,
+      "calls": 29,
+      "depends-on": 6,
+      "called-by": 1,
+      "returns": 4,
+      "dispatches-to": 1,
+      "implements": 1,
+      "data-model": 1,
+      "tests": 6,
+      "uses": 1,
+      "configures": 1,
+      "runs": 1,
+      "monitors": 1,
+      "builds": 2,
+      "metadata-for": 1,
+      "caches": 1,
+      "prepares": 1,
+      "imports": 7
+    },
+    "layersCovered": 111,
+    "unassignedFileNodes": 0
+  }
+}

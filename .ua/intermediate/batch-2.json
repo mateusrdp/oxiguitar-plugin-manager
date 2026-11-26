@@ -1,0 +1,116 @@
+{
+  "nodes": [
+    {
+      "id": "file:CHANGELOG.md",
+      "type": "file",
+      "name": "CHANGELOG.md",
+      "summary": "Unreleased changelog with one entry: added oxiguitar-plugin-manager (the plugin itself).",
+      "tags": ["changelog", "release-notes"],
+      "complexity": 1,
+      "filePath": "CHANGELOG.md"
+    },
+    {
+      "id": "file:CLAUDE.md",
+      "type": "file",
+      "name": "CLAUDE.md",
+      "summary": "Project directives for AI coding agents: architecture overview, development process, testing conventions, GitHub workflow, and file format/output plugin lists.",
+      "tags": ["agent-instructions", "project-guidelines"],
+      "complexity": 2,
+      "filePath": "CLAUDE.md"
+    },
+    {
+      "id": "file:CONTRIBUTING.md",
+      "type": "file",
+      "name": "CONTRIBUTING.md",
+      "summary": "Contribution guidelines: development setup, code style, testing requirements, and submission process.",
+      "tags": ["contributing", "guidelines"],
+      "complexity": 1,
+      "filePath": "CONTRIBUTING.md"
+    },
+    {
+      "id": "file:Cargo.toml",
+      "type": "file",
+      "name": "Cargo.toml",
+      "summary": "Rust package manifest: name oxiguitar-plugin-manager, edition 2024, version 0.1.0. Dependencies: oxiguitar-plugin (interface 1.15), oxiguitar-plugin-test (dev), semver, sha2, tar, ureq, zip. Features: oxp (enables tar dependency for OxiGuitar plugin archive format). Build dependencies: oxiguitar-plugin/build. Workspace excluded.",
+      "tags": ["cargo", "dependencies", "rust", "package-manifest"],
+      "complexity": 2,
+      "filePath": "Cargo.toml"
+    },
+    {
+      "id": "file:README.md",
+      "type": "file",
+      "name": "README.md",
+      "summary": "Project README: overview, build instructions, installation, usage, and links to documentation.",
+      "tags": ["readme", "documentation"],
+      "complexity": 1,
+      "filePath": "README.md"
+    },
+    {
+      "id": "file:build-oxp.sh",
+      "type": "file",
+      "name": "build-oxp.sh",
+      "summary": "Build script that compiles the plugin as a .oxp archive: runs cargo build with oxp feature, then packages the library with manifest.json into a tar archive following the OxiGuitar plugin file format.",
+      "tags": ["build-script", "shell", "packaging"],
+      "complexity": 2,
+      "filePath": "build-oxp.sh"
+    },
+    {
+      "id": "file:clippy.toml",
+      "type": "file",
+      "name": "clippy.toml",
+      "summary": "Clippy linter configuration: allows small names (single-character identifiers), matches the minimal naming style used throughout the codebase.",
+      "tags": ["clippy", "linting", "configuration"],
+      "complexity": 1,
+      "filePath": "clippy.toml"
+    },
+    {
+      "id": "file:deny.toml",
+      "type": "file",
+      "name": "deny.toml",
+      "summary": "Cargo deny configuration: license checks (GPL-3.0-or-later allowed), bans, advisories, and sources. Ensures all dependencies have acceptable licenses and no known security advisories.",
+      "tags": ["cargo-deny", "licensing", "security"],
+      "complexity": 2,
+      "filePath": "deny.toml"
+    },
+    {
+      "id": "file:manifest.json",
+      "type": "file",
+      "name": "manifest.json",
+      "summary": "OxiGuitar plugin manifest: id oxiguitar.plugin-manager, name Plugin Manager, tool manage, interface version 1.15. Declares homepage as the GitHub repository URL.",
+      "tags": ["manifest", "plugin-metadata", "oxp-format"],
+      "complexity": 1,
+      "filePath": "manifest.json"
+    },
+    {
+      "id": "file:rustfmt.toml",
+      "type": "file",
+      "name": "rustfmt.toml",
+      "summary": "Rust formatter configuration: max_width 100, chain_width 80, single_line_if_else_max_width 80.",
+      "tags": ["rustfmt", "formatting", "configuration"],
+      "complexity": 1,
+      "filePath": "rustfmt.toml"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:Cargo.toml",
+      "target": "file:manifest.json",
+      "type": "references"
+    },
+    {
+      "source": "file:build-oxp.sh",
+      "target": "file:Cargo.toml",
+      "type": "references"
+    },
+    {
+      "source": "file:README.md",
+      "target": "file:CHANGELOG.md",
+      "type": "references"
+    },
+    {
+      "source": "file:CONTRIBUTING.md",
+      "target": "file:README.md",
+      "type": "references"
+    }
+  ]
+}
